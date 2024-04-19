@@ -29,7 +29,7 @@ target_link_libraries(${PROJECT_NAME} PUBLIC rawri)
 
 ## Contributing
 
-Pull requests are welcome. For major changes, please open an issue first
+This library is far from perfect and is mostly for private use. If you want to contribute and improve it you can surely do as pull requests are welcome. For major changes, please open an issue first
 to discuss what you would like to change.
 
 Please make sure to update tests as appropriate.
