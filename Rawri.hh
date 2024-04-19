@@ -3,5 +3,8 @@
  
 #include "Rawri/Types.hh"
 #include "Rawri/DataStore.hh"
+#include "Rawri/Log.hh"
+#include "Rawri/Random.hh"
+#include "Rawri/Thread.hh"
 
 #endif // __RAWRI__HH__

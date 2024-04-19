@@ -6,146 +6,149 @@
 #include <type_traits>
 #include <unordered_map>
 
-class DataStore
+namespace Rawri
 {
-   public:
-	template <typename T>
-	void Set(const std::string& id, const T& data)
-	{
-		m_Data[id] = std::make_unique<DataStoreHolder<T>>(data);
-	}
+    class DataStore
+    {
+        public:
+        template <typename T>
+        void Set(const std::string& id, const T& data)
+        {
+            m_Data[id] = std::make_unique<DataStoreHolder<T>>(data);
+        }
 
-	bool Find(const std::string& id)
-	{
-		auto it = m_Data.find(id);
-		if (it == m_Data.end())
-		{
-			return false;
-		}
+        bool Find(const std::string& id)
+        {
+            auto it = m_Data.find(id);
+            if (it == m_Data.end())
+            {
+                return false;
+            }
 
-		return true;
-	}
+            return true;
+        }
 
-	void Remove(const std::string& id)
-	{
-		auto it = m_Data.find(id);
-		if (it == m_Data.end())
-		{
-			return;
-		}
+        void Remove(const std::string& id)
+        {
+            auto it = m_Data.find(id);
+            if (it == m_Data.end())
+            {
+                return;
+            }
 
-		m_Data.erase(it);
-	}
+            m_Data.erase(it);
+        }
 
-	template <typename T>
-	typename std::enable_if<!std::is_void<T>::value, T>::type Get(const std::string& id) const
-	{
-		auto it = m_Data.find(id);
-		if (it == m_Data.end())
-		{
-			throw std::out_of_range("ID \"" + id + "\" not found from DataStore.");
-		}
+        template <typename T>
+        typename std::enable_if<!std::is_void<T>::value, T>::type Get(const std::string& id) const
+        {
+            auto it = m_Data.find(id);
+            if (it == m_Data.end())
+            {
+                throw std::out_of_range("ID \"" + id + "\" not found from DataStore.");
+            }
 
-		auto holder = dynamic_cast<DataStoreHolder<T>*>(it->second.get());
-		if (!holder)
-		{
-			throw std::invalid_argument("Type mismatch in DataStore.");
-		}
+            auto holder = dynamic_cast<DataStoreHolder<T>*>(it->second.get());
+            if (!holder)
+            {
+                throw std::invalid_argument("Type mismatch in DataStore.");
+            }
 
-		return holder->data;
-	}
+            return holder->data;
+        }
 
-	template <typename T>
-	typename std::enable_if<std::is_void<T>::value>::type Get(const std::string& id) const
-	{
-		auto it = m_Data.find(id);
-		if (it == m_Data.end())
-		{
-			throw std::out_of_range("ID \"" + id + "\" not found from DataStore.");
-		}
-		auto holder = dynamic_cast<DataStoreHolder<T>*>(it->second.get());
-		if (!holder)
-		{
-			throw std::invalid_argument("Type mismatch in DataStore.");
-		}
-	}
+        template <typename T>
+        typename std::enable_if<std::is_void<T>::value>::type Get(const std::string& id) const
+        {
+            auto it = m_Data.find(id);
+            if (it == m_Data.end())
+            {
+                throw std::out_of_range("ID \"" + id + "\" not found from DataStore.");
+            }
+            auto holder = dynamic_cast<DataStoreHolder<T>*>(it->second.get());
+            if (!holder)
+            {
+                throw std::invalid_argument("Type mismatch in DataStore.");
+            }
+        }
 
-	template <typename T>
-	typename std::enable_if<!std::is_void<T>::value, std::string>::type GetType(const std::string& id) const
-	{
-		auto it = m_Data.find(id);
-		if (it == m_Data.end())
-		{
-			throw std::out_of_range("ID \"" + id + "\" not found from DataStore.");
-		}
+        template <typename T>
+        typename std::enable_if<!std::is_void<T>::value, std::string>::type GetType(const std::string& id) const
+        {
+            auto it = m_Data.find(id);
+            if (it == m_Data.end())
+            {
+                throw std::out_of_range("ID \"" + id + "\" not found from DataStore.");
+            }
 
-		auto holder = dynamic_cast<DataStoreHolder<T>*>(it->second.get());
-		if (!holder)
-		{
-			throw std::invalid_argument("Type mismatch in DataStore.");
-		}
+            auto holder = dynamic_cast<DataStoreHolder<T>*>(it->second.get());
+            if (!holder)
+            {
+                throw std::invalid_argument("Type mismatch in DataStore.");
+            }
 
-		return typeid(T).name();
-	}
+            return typeid(T).name();
+        }
 
-	size_t GetSize(const std::string& id) const
-	{
-		auto it = m_Data.find(id);
-		if (it == m_Data.end())
-		{
-			throw std::out_of_range("ID \"" + id + "\" not found from DataStore.");
-		}
+        size_t GetSize(const std::string& id) const
+        {
+            auto it = m_Data.find(id);
+            if (it == m_Data.end())
+            {
+                throw std::out_of_range("ID \"" + id + "\" not found from DataStore.");
+            }
 
-		auto holder = it->second.get();
-		if (!holder)
-		{
-			throw std::invalid_argument("Type mismatch in DataStore.");
-		}
+            auto holder = it->second.get();
+            if (!holder)
+            {
+                throw std::invalid_argument("Type mismatch in DataStore.");
+            }
 
-		return  sizeof(*holder);
-	}
+            return  sizeof(*holder);
+        }
 
-	size_t GetMemoryUsage(bool redundancy = false) const
-	{
-		size_t totalSize = 0;
-		for (auto& kv : m_Data)
-		{
-			totalSize += GetSize(kv.first);
-		}
+        size_t GetMemoryUsage(bool redundancy = false) const
+        {
+            size_t totalSize = 0;
+            for (auto& kv : m_Data)
+            {
+                totalSize += GetSize(kv.first);
+            }
 
-		if (redundancy)
-		{
-			totalSize *= 2;
-		}
+            if (redundancy)
+            {
+                totalSize *= 2;
+            }
 
-		return totalSize;
-	}
+            return totalSize;
+        }
 
-	void Reset()
-	{
-		m_Data.clear();
-	}
+        void Reset()
+        {
+            m_Data.clear();
+        }
 
-   private:
-	class DataStoreHolderBase
-	{
-	   public:
-		virtual ~DataStoreHolderBase()
-		{
-		}
-	};
+        private:
+        class DataStoreHolderBase
+        {
+            public:
+            virtual ~DataStoreHolderBase()
+            {
+            }
+        };
 
-	template <typename T>
-	class DataStoreHolder : public DataStoreHolderBase
-	{
-	   public:
-		DataStoreHolder(const T& data) : data(data)
-		{
-		}
-		T data;
-	};
+        template <typename T>
+        class DataStoreHolder : public DataStoreHolderBase
+        {
+            public:
+            DataStoreHolder(const T& data) : data(data)
+            {
+            }
+            T data;
+        };
 
-	std::unordered_map<std::string, std::unique_ptr<DataStoreHolderBase>> m_Data;
-};
+        std::unordered_map<std::string, std::unique_ptr<DataStoreHolderBase>> m_Data;
+    };
+}
 
 #endif	// __RAWRI__DATASTORE__HH__
