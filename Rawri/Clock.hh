@@ -43,14 +43,11 @@ namespace Rawri
 
         inline auto TimePointToEpochMilli(TimePoint timePoint) -> uint64_t
         {
-            // Convert a time point to the number of milliseconds since the epoch
             return std::chrono::duration_cast<std::chrono::milliseconds>(timePoint.time_since_epoch()).count();
         }
 
         inline auto EpochMilliToTimePoint(int64_t millisecondsSinceEpoch) -> TimePoint
         {
-            // Convert milliseconds since the epoch to a time point
-            // Note: You should use the `std::chrono::milliseconds` literal to create a duration.
             TimePoint dt{std::chrono::milliseconds(millisecondsSinceEpoch)};
             return dt;
         }
