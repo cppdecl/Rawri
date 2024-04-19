@@ -6,5 +6,6 @@
 #include "Rawri/Log.hh"
 #include "Rawri/Random.hh"
 #include "Rawri/Thread.hh"
+#include "Rawri/Clock.hh"
 
 #endif // __RAWRI__HH__
